@@ -1,8 +1,10 @@
 # TinyDecorator
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/tiny_decorator`. To experiment with that code, run `bin/console` for an interactive prompt.
+The world of ruby decorator is dominated by `draper`, I use it all the time.
+But when project grows and we chase the dealine, the flexible and easily of `draper` make us keep abusing it. Now, when using a decorated model we dont know which method/attribute are define in which decorator, which decorators depend on which ones.
+`tiny_decorator` aims to separate decoration logic into different decorators, and centralize logic to determine which decorators are used. It isn't built to replace `draper` as it just solve our internal problem of abusing `draper`, it's better if you using `draper` wisely instead `tiny_decorator`
 
-TODO: Delete this and the text above, and describe your gem
+But if you're interesting in this gem, every contributes are welcome.
 
 ## Installation
 
@@ -22,7 +24,41 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Model decorated by 1 single decorator
+```ruby
+  class NewDecorator < TinyDecorator::SingleDecorator
+    def new_method
+      'decorated'
+    end
+  end
+
+  NewDecorator.decorate(Object.new).new_method # 'decorated'
+  NewDecorator.decorate_collection([Object.new, Object.new])[1].new_method # 'decorated'
+```
+
+Model decorate by more than 1 decorators
+```ruby
+  class NewDecorator2
+    extend TinyDecorator::CompositeDecorator
+
+    decorated_by :default, 'DefaultDecorator'
+
+    decorated_by :nil, ->(record) { record.nil? ? 'NilDecorator' : 'DefaultDecorator' }
+    decorated_by :nil, ->(record, context) { record.in(context).nil? ? 'NilDecorator' : 'DefaultDecorator' }
+  end
+```
+
+And use it
+```ruby
+context = { current_user: user }
+#
+NewDecorator.decorate(model)
+NewDecorator.decorate(model, context)
+# OR
+NewDecorator.decorate_collection(models)
+NewDecorator.decorate_collection(models, context)
+
+```
 
 ## Development
 
