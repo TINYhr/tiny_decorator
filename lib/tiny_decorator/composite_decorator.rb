@@ -45,6 +45,14 @@ module TinyDecorator
 
     # Decorate an object by defined `#decorated_by`
     def decorate(record, context = {})
+      if instance_variable_get(:@_contexts)
+        context = context.merge(instance_variable_get(:@_contexts).inject({}) do |carry, (context_name, context_block)|
+          context[context_name] = context_block.call(record, context)
+
+          carry
+        end)
+      end
+
       instance_variable_get(:@decorators).inject(record) do |carry, (name, value)|
         decorator = decorator_resolver(name, value, record, context)
         if decorator
@@ -61,6 +69,12 @@ module TinyDecorator
       decorators = instance_variable_get(:@decorators) || {}
       decorators[decorate_name] = [class_name, condition_block]
       instance_variable_set(:@decorators, decorators)
+    end
+
+    def set_context(context_name, context_block)
+      _contexts = instance_variable_get(:@_contexts) || {}
+      _contexts[context_name] = context_block
+      instance_variable_set(:@_contexts, _contexts)
     end
 
     # Resolve decorator class from #decorated_by definition
