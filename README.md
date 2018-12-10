@@ -1,3 +1,6 @@
+
+[![Build Status](https://travis-ci.org/anvox/tiny_decorator.svg?branch=master)](https://travis-ci.org/anvox/tiny_decorator)
+
 # TinyDecorator
 
 The world of ruby decorator is dominated by `draper`, I use it all the time.
