@@ -5,3 +5,11 @@ rvm:
 before_install: gem install bundler -v 1.17.1
 script:
   - bundle exec rspec
+deploy:
+  provider: rubygems
+  api_key:
+    secure: VfAdlKJmGqIjszXJBt20n3u/l0seyZNWbfrOTMTjAfL7zeIqGEEE82VVXJPXpZukH1/2n61MxmSCwfqXosfnQ7bjYOTXloIVNY8A8KHDC0BJBmzNN1Ex6neFoEl33Gw8+0pVToUiJpDbw8RUSND9yyNDM9P44BCS9yRoYPRKmb8kdyf57y4lB8d+guPPl6O/SwJ5t9KpazNEQYJuWmSzY5hebooVgp4ZjD/GH3XbsgzdGo/Qrv4D1Ie782J6QO/KPCbFIx6/EBwi4iDjWSp843bto5UVSlHY0HNcr9jmUxV/Egom/ISgizZNDjPgmuQNzpkgzPdYPnKg68iFZDY7Qhik9RPQTRotCYPqk9sGu2W3E9dYEIfD4ddMnl5bWvufS7x2z/B3t4fEw44be1Tn9VuBDWn7SyJU140GXz8SxvzyAz6UUFBtA+02g7S+Tci6P63G1S65pccFUc/T5+pgfYwA+7ykUiSIWYQaJx0SYJPrk2yOphFJmFfQp6wF25K177C6uwJvSof7PhHcLJiwB6O5qSpHx8O70M4zPcZcgrKRMWPh+PJfIyukif/Jxp5CCyaYwGvbqg1Ox9M6/SonsbNBgBefclJziIgTWre5nXjSHZaEW5QNdprGyBEoF1aTpR/lRozutuX5PgxyM4NfZ4zGvbkOAnZ6rncza0zurnk=
+  gem: tiny_decorator
+  on:
+    tags: true
+    repo: anvox/tiny_decorator
