@@ -26,9 +26,9 @@ module TinyDecorator
     attr_reader :context
 
     class << self
-    # Decorate a collection, collection must extend Enum behavior
-    # @param delegatees [Array] collection of source object to decorate
-    # @param context [Hash] context as hash, could read within decorator scope by `context[]`
+      # Decorate a collection, collection must extend Enum behavior
+      # @param delegatees [Array] collection of source object to decorate
+      # @param context [Hash] context as hash, could read within decorator scope by `context[]`
       def decorate_collection(delegatees, context = {})
         delegatees.map do |delegatee|
           new(delegatee, context)
