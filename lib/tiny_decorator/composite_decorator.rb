@@ -38,7 +38,7 @@ module TinyDecorator
     # TODO: [AV] It's greate if with activerecord relationshop, we defer decorate until data retrieved.
     #       Using `map` will make data retrieval executes immediately
     def decorate_collection(records, context = {})
-      records.map do |record|
+      Array(records).map do |record|
         decorate(record, context)
       end
     end
@@ -56,7 +56,11 @@ module TinyDecorator
       instance_variable_get(:@decorators).inject(record) do |carry, (name, value)|
         decorator = decorator_resolver(name, value, record, context)
         if decorator
-          carry = const_get(decorator).decorate(carry, context)
+          carry = begin
+            const_get(decorator, false)
+          rescue NameError
+            Object.const_get(decorator, false)
+          end.decorate(carry, context)
         end
 
         carry
