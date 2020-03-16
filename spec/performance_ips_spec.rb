@@ -1,10 +1,6 @@
 require 'benchmark/ips'
-require 'pry-byebug'
 require 'draper'
 require 'spec_helper'
-
-NUM_DECORATOR = 10
-NUM_ATTRIBUTE = 10
 
 klasses = ""
 main_decorator = <<-MAIN_DECORATOR
