@@ -1,5 +1,9 @@
 require "bundler/setup"
+require 'pry-byebug'
 require "tiny_decorator"
+
+NUM_DECORATOR = 10
+NUM_ATTRIBUTE = 10
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
