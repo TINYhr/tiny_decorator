@@ -8,3 +8,4 @@ gemspec
 gem 'pry-byebug'
 gem 'benchmark-ips'
 gem 'draper'
+gem 'ruby-prof'
