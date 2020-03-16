@@ -38,6 +38,7 @@ module TinyDecorator
     # TODO: [AV] It's greate if with activerecord relationshop, we defer decorate until data retrieved.
     #       Using `map` will make data retrieval executes immediately
     def decorate_collection(records, context = {})
+      # Preload
       Array(records).map do |record|
         decorate(record, context)
       end
