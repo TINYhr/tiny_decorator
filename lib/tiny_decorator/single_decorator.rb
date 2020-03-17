@@ -36,6 +36,11 @@ module TinyDecorator
       end
 
       alias decorate new
+
+      unless defined?(:delegate)
+        def delegate(*args)
+        end
+      end
     end
   end
 end
