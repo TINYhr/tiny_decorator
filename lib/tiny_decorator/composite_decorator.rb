@@ -35,7 +35,7 @@ module TinyDecorator
   #
   module CompositeDecorator
     # Decorate collection of objects, each object is decorate by `#decorate`
-    # TODO: [AV] It's greate if with activerecord relationshop, we defer decorate until data retrieved.
+    # TODO: [AV] It's greate if with activerecord relationship, we defer decorate until data retrieved.
     #       Using `map` will make data retrieval executes immediately
     def decorate_collection(records, context = {})
       if instance_variable_get(:@_preloaders)
@@ -60,7 +60,7 @@ module TinyDecorator
         end)
       end
 
-      instance_variable_get(:@decorators).inject(record) do |carry, (name, value)|
+      instance_variable_get(:@_decorators).inject(record) do |carry, (name, value)|
         decorator = decorator_resolver(name, value, record, context)
         if decorator
           carry = begin
@@ -78,13 +78,12 @@ module TinyDecorator
 
     # decorated_by
     def decorated_by(decorate_name, class_name, condition_block = nil)
-      decorators = instance_variable_get(:@decorators) || {}
+      decorators = instance_variable_get(:@_decorators) || {}
       decorators[decorate_name] = [class_name, condition_block]
-      instance_variable_set(:@decorators, decorators)
+      instance_variable_set(:@_decorators, decorators)
     end
 
     # set_context
-    # TODO: [AV] Move @_contexts to class level
     def set_context(context_name, context_block)
       _contexts = instance_variable_get(:@_contexts) || {}
       _contexts[context_name] = context_block
@@ -95,7 +94,6 @@ module TinyDecorator
     # preload preload_name, ->(records, preloaded) do
     #   Relation.where(id: records.map(&:relation_id).compact.uniq)
     # end
-    # TODO: [AV] Move @_preloaders to class level
     def preload(preloader, preloader_block)
       _preloaders = instance_variable_get(:@_preloaders) || {}
       _preloaders[preloader] = preloader_block

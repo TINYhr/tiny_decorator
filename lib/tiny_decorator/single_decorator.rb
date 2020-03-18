@@ -1,3 +1,5 @@
+require 'tiny_decorator/delegatable'
+
 module TinyDecorator
   # Single decorator. Inherite, then define methods to use.
   # This base decorator delegates all. To limit delegation to source object.
@@ -37,10 +39,7 @@ module TinyDecorator
 
       alias decorate new
 
-      unless defined?(:delegate)
-        def delegate(*args)
-        end
-      end
+      include TinyDecorator::Delegatable
     end
   end
 end
