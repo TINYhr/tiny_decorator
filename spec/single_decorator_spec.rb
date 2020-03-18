@@ -6,6 +6,10 @@ class Bar
   def attribute2
     'attribute2'
   end
+
+  def sum
+    100
+  end
 end
 
 class Foo < TinyDecorator::SingleDecorator
@@ -16,6 +20,8 @@ class Foo < TinyDecorator::SingleDecorator
   def context_attribute
     context[:attribute]
   end
+
+  delegate :to_s, to: :sum
 end
 
 RSpec.describe TinyDecorator::SingleDecorator do
@@ -28,8 +34,12 @@ RSpec.describe TinyDecorator::SingleDecorator do
       expect(Foo.decorate(Bar.new).attribute1).to eq('decorated_attribute1')
     end
 
-    it 'delegates method' do
+    it 'undecorated method' do
       expect(Foo.decorate(Bar.new).attribute2).to eq('attribute2')
+    end
+
+    it 'delegates method' do
+      expect(Foo.decorate(Bar.new).to_s).to eq('100')
     end
 
     context 'has decorate context' do
@@ -58,8 +68,12 @@ RSpec.describe TinyDecorator::SingleDecorator do
       expect(Foo.new(Bar.new).attribute1).to eq('decorated_attribute1')
     end
 
-    it 'delegates method' do
+    it 'undecorated method' do
       expect(Foo.new(Bar.new).attribute2).to eq('attribute2')
+    end
+
+    it 'delegates method' do
+      expect(Foo.decorate(Bar.new).to_s).to eq('100')
     end
 
     context 'has decorate context' do
@@ -93,13 +107,22 @@ RSpec.describe TinyDecorator::SingleDecorator do
       expect(decorated_list[1].attribute1).to eq('decorated_attribute1')
     end
 
-    it 'delegates methods' do
+    it 'undecorated methods' do
       list = [Bar.new, Bar.new]
       decorated_list = Foo.decorate_collection(list)
 
       expect(decorated_list.count).to eq(list.count)
       expect(decorated_list[0].attribute2).to eq('attribute2')
       expect(decorated_list[1].attribute2).to eq('attribute2')
+    end
+
+    it 'delegates methods' do
+      list = [Bar.new, Bar.new]
+      decorated_list = Foo.decorate_collection(list)
+
+      expect(decorated_list.count).to eq(list.count)
+      expect(decorated_list[0].to_s).to eq('100')
+      expect(decorated_list[1].to_s).to eq('100')
     end
 
     context 'has decorate context' do
