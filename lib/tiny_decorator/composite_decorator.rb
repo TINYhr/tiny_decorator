@@ -1,6 +1,7 @@
 module TinyDecorator
   #
   # Passing only decorator name, object will be decorated
+  # 
   # ```
   #   extend TinyDecorator::CompositeDecorator
   #   decorated_by :default, 'DefaultDecorator'
@@ -35,17 +36,23 @@ module TinyDecorator
   #
   module CompositeDecorator
     # Decorate collection of objects, each object is decorate by `#decorate`
-    # TODO: [AV] It's greate if with activerecord relationshop, we defer decorate until data retrieved.
+    # TODO: [AV] It's greate if with activerecord relationship, we defer decorate until data retrieved.
     #       Using `map` will make data retrieval executes immediately
     def decorate_collection(records, context = {})
-      # Preload
+      if instance_variable_get(:@_preloaders)
+        preloaded = {}
+        instance_variable_get(:@_preloaders).each do |preloader, execute_block|
+          preloaded[preloader] = execute_block.call(records, context, preloaded)
+        end
+      end
+
       Array(records).map do |record|
-        decorate(record, context)
+        decorate(record, context, preloaded)
       end
     end
 
     # Decorate an object by defined `#decorated_by`
-    def decorate(record, context = {})
+    def decorate(record, context = {}, preloaded = {})
       if instance_variable_get(:@_contexts)
         context = context.merge(instance_variable_get(:@_contexts).inject({}) do |carry, (context_name, context_block)|
           context[context_name] = context_block.call(record, context)
@@ -54,14 +61,14 @@ module TinyDecorator
         end)
       end
 
-      instance_variable_get(:@decorators).inject(record) do |carry, (name, value)|
+      instance_variable_get(:@_decorators).inject(record) do |carry, (name, value)|
         decorator = decorator_resolver(name, value, record, context)
         if decorator
           carry = begin
             const_get(decorator, false)
           rescue NameError
             Object.const_get(decorator, false)
-          end.decorate(carry, context)
+          end.decorate(carry, context, preloaded)
         end
 
         carry
@@ -70,16 +77,29 @@ module TinyDecorator
 
     private
 
+    # decorated_by
     def decorated_by(decorate_name, class_name, condition_block = nil)
-      decorators = instance_variable_get(:@decorators) || {}
+      decorators = instance_variable_get(:@_decorators) || {}
       decorators[decorate_name] = [class_name, condition_block]
-      instance_variable_set(:@decorators, decorators)
+      instance_variable_set(:@_decorators, decorators)
     end
 
+    # set_context
     def set_context(context_name, context_block)
       _contexts = instance_variable_get(:@_contexts) || {}
       _contexts[context_name] = context_block
       instance_variable_set(:@_contexts, _contexts)
+    end
+
+    # preload
+    # Similar to context. but run once on whole collection
+    # preload preload_name, ->(records, preloaded) do
+    #   Relation.where(id: records.map(&:relation_id).compact.uniq)
+    # end
+    def preload(preloader, preloader_block)
+      _preloaders = instance_variable_get(:@_preloaders) || {}
+      _preloaders[preloader] = preloader_block
+      instance_variable_set(:@_preloaders, _preloaders)
     end
 
     # Resolve decorator class from #decorated_by definition
