@@ -1,104 +1,104 @@
-class Bar
-  def initialize(value1)
-    @value1 = value1
-  end
-
-  attr_reader :value1
-
-  def attribute1
-    'attribute1'
-  end
-
-  def attribute2
-    'attribute2'
-  end
-
-  def attribute3
-    'attribute3'
-  end
-end
-
-class Foo1 < TinyDecorator::SingleDecorator
-  def attribute1
-    'foo1 decorated_attribute1'
-  end
-
-  def context_attribute
-    "foo1 #{context[:attribute]}"
-  end
-
-  def attribute3_clone
-    "#{attribute3} cloned"
-  end
-
-  def attribute5_overwritten
-    "foo1:#{attribute5}"
-  end
-
-  def foo_preloaded
-    preloaded[:fooes]
-  end
-end
-
-class Foo2 < TinyDecorator::SingleDecorator
-  def attribute2
-    'foo2 decorated_attribute2'
-  end
-
-  def context_attribute
-    "foo2 #{context[:attribute]}"
-  end
-end
-
-class Foo3 < TinyDecorator::SingleDecorator
-  def attribute3
-    'foo3 decorated_attribute3'
-  end
-
-  def context_attribute
-    "foo3 #{context[:attribute]}"
-  end
-end
-
-class Foo4 < TinyDecorator::SingleDecorator
-  def attribute4
-    'foo4 decorated_attribute4'
-  end
-
-  def context_attribute
-    "foo4 #{context[:attribute]}"
-  end
-end
-
-class Foo5 < TinyDecorator::SingleDecorator
-  def attribute5
-    'foo5 decorated_attribute5'
-  end
-
-  def context_attribute
-    "foo5 #{context[:attribute]}"
-  end
-
-  def attribute1_overwritten
-    "foo5:#{attribute1}"
-  end
-end
-
-class MainFoo
-  extend TinyDecorator::CompositeDecorator
-
-  preload :fooes, ->(records, context, preloaded) do
-    records.map {|_| 1 }
-  end
-
-  set_context :attribute, ->(_record, _context) { 123 }
-
-  decorated_by :string_decorator, 'Foo1'
-  decorated_by :block_decorator, ->(record) { record.value1.to_i < 0 ? 'Foo2' : 'Foo3'  }
-  decorated_by :block_decorator_with_context, ->(record, context) { context[:value2].to_i < 0 ? 'Foo4' : 'Foo5' }
-end
-
 RSpec.describe TinyDecorator::CompositeDecorator do
+  class Bar
+    def initialize(value1)
+      @value1 = value1
+    end
+
+    attr_reader :value1
+
+    def attribute1
+      'attribute1'
+    end
+
+    def attribute2
+      'attribute2'
+    end
+
+    def attribute3
+      'attribute3'
+    end
+  end
+
+  class Foo1 < TinyDecorator::SingleDecorator
+    def attribute1
+      'foo1 decorated_attribute1'
+    end
+
+    def context_attribute
+      "foo1 #{context[:attribute]}"
+    end
+
+    def attribute3_clone
+      "#{attribute3} cloned"
+    end
+
+    def attribute5_overwritten
+      "foo1:#{attribute5}"
+    end
+
+    def foo_preloaded
+      preloaded[:fooes]
+    end
+  end
+
+  class Foo2 < TinyDecorator::SingleDecorator
+    def attribute2
+      'foo2 decorated_attribute2'
+    end
+
+    def context_attribute
+      "foo2 #{context[:attribute]}"
+    end
+  end
+
+  class Foo3 < TinyDecorator::SingleDecorator
+    def attribute3
+      'foo3 decorated_attribute3'
+    end
+
+    def context_attribute
+      "foo3 #{context[:attribute]}"
+    end
+  end
+
+  class Foo4 < TinyDecorator::SingleDecorator
+    def attribute4
+      'foo4 decorated_attribute4'
+    end
+
+    def context_attribute
+      "foo4 #{context[:attribute]}"
+    end
+  end
+
+  class Foo5 < TinyDecorator::SingleDecorator
+    def attribute5
+      'foo5 decorated_attribute5'
+    end
+
+    def context_attribute
+      "foo5 #{context[:attribute]}"
+    end
+
+    def attribute1_overwritten
+      "foo5:#{attribute1}"
+    end
+  end
+
+  class MainFoo
+    extend TinyDecorator::CompositeDecorator
+
+    preload :fooes, ->(records, context, preloaded) do
+      records.map {|_| 1 }
+    end
+
+    set_context :attribute, ->(_record, _context) { 123 }
+
+    decorated_by :string_decorator, 'Foo1'
+    decorated_by :block_decorator, ->(record) { record.value1.to_i < 0 ? 'Foo2' : 'Foo3'  }
+    decorated_by :block_decorator_with_context, ->(record, context) { context[:value2].to_i < 0 ? 'Foo4' : 'Foo5' }
+  end
+
   describe '#decorate' do
     context 'no context' do
       it 'decorates correct' do

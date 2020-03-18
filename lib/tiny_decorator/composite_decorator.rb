@@ -1,6 +1,7 @@
 module TinyDecorator
   #
   # Passing only decorator name, object will be decorated
+  # 
   # ```
   #   extend TinyDecorator::CompositeDecorator
   #   decorated_by :default, 'DefaultDecorator'
