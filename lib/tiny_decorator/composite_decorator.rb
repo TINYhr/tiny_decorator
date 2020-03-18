@@ -46,12 +46,12 @@ module TinyDecorator
       end
 
       Array(records).map do |record|
-        decorate(record, context)
+        decorate(record, context, preloaded)
       end
     end
 
     # Decorate an object by defined `#decorated_by`
-    def decorate(record, context = {})
+    def decorate(record, context = {}, preloaded = {})
       if instance_variable_get(:@_contexts)
         context = context.merge(instance_variable_get(:@_contexts).inject({}) do |carry, (context_name, context_block)|
           context[context_name] = context_block.call(record, context)
@@ -67,7 +67,7 @@ module TinyDecorator
             const_get(decorator, false)
           rescue NameError
             Object.const_get(decorator, false)
-          end.decorate(carry, context)
+          end.decorate(carry, context, preloaded)
         end
 
         carry
@@ -90,7 +90,8 @@ module TinyDecorator
       instance_variable_set(:@_contexts, _contexts)
     end
 
-    # prepload
+    # preload
+    # Similar to context. but run once on whole collection
     # preload preload_name, ->(records, preloaded) do
     #   Relation.where(id: records.map(&:relation_id).compact.uniq)
     # end

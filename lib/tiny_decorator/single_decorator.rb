@@ -21,11 +21,12 @@ module TinyDecorator
     # Initialize, use `.decorate` or `.new` are the same
     # @param delegatee [Object] source object to decorate
     # @param context [Hash] context as hash, could read within decorator scope by `context[]`
-    def initialize(delegatee, context = {})
+    def initialize(delegatee, context = {}, preloaded = {})
       @context = context
+      @preloaded = preloaded
       __setobj__(delegatee)
     end
-    attr_reader :context
+    attr_reader :context, :preloaded
 
     class << self
       # Decorate a collection, collection must extend Enum behavior

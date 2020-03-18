@@ -34,6 +34,10 @@ class Foo1 < TinyDecorator::SingleDecorator
   def attribute5_overwritten
     "foo1:#{attribute5}"
   end
+
+  def foo_preloaded
+    preloaded[:fooes]
+  end
 end
 
 class Foo2 < TinyDecorator::SingleDecorator
@@ -82,6 +86,10 @@ end
 
 class MainFoo
   extend TinyDecorator::CompositeDecorator
+
+  preload :fooes, ->(records, context, preloaded) do
+    records.map {|_| 1 }
+  end
 
   set_context :attribute, ->(_record, _context) { 123 }
 
@@ -209,5 +217,18 @@ RSpec.describe TinyDecorator::CompositeDecorator do
 
   it 'return context value' do
     expect(MainFoo.decorate(Bar.new(-1)).context_attribute).to eq('foo5 123')
+  end
+
+  describe 'preload' do
+    it 'execute preload block' do
+        list = [
+          Bar.new(1),
+          Bar.new(-1)
+        ]
+
+        decorated_list = MainFoo.decorate_collection(list)
+        expect(decorated_list[0].foo_preloaded).to eq([1,1])
+        expect(decorated_list[1].foo_preloaded).to eq([1,1])
+    end
   end
 end
