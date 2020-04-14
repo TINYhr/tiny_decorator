@@ -34,6 +34,18 @@ module TinyDecorator
   # The decorator is a sub class of TinyDecorator::BaseDelegator (or draper decorator, but not recommend)
   # TinyDecorator::BaseDelegator will answer the question which attributes are decorated.
   #
+  # In case we don't have eager loading or rails' eager loading doesn't match,
+  #   preload block could be used to manually load data to avoid N+1.
+  #   Then access through 3rd param of decorator
+  #
+  # ```ruby
+  #   preload :count_all, ->(all_records, context, preloaded) { Group(all_records).count }
+  # ```
+  #   all_records - all the records to decorate
+  #   context     - The context passed to collection decorating,
+  #     because preload run once before all decratings, this is the only cotext we have at this time
+  #   preloaded   - all preloaded before. For perfomrance, it's mutable, please handle with care
+  #
   module CompositeDecorator
     # Decorate collection of objects, each object is decorate by `#decorate`
     # TODO: [AV] It's greate if with activerecord relationship, we defer decorate until data retrieved.

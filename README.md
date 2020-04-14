@@ -63,6 +63,21 @@ NewDecorator.decorate_collection(models, context)
 
 ```
 
+### Preload
+
+In case rails' eager loading doesn't fit, or we don't use. `preload` could be used to avoid N+1.
+
+```ruby
+  preload :count_all, ->(all_records, context, preloaded) { Group(all_records).count }
+  #   all_records - all the records to decorate
+  #   context     - The context passed to collection decorating,
+  #     because preload run once before all decratings, this is the only cotext we have at this time
+  #   preloaded   - all preloaded before. For perfomrance, it's mutable, please handle with care
+```
+
+Then each single decorator could access through `preload[:count_all]`.
+Note: `preload` will be run once before decorating all records, compare to context will be ran for each record.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
