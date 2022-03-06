@@ -28,6 +28,9 @@ module TinyDecorator
     end
     attr_reader :context, :preloaded
 
+    alias _source __getobj__
+    alias _object __getobj__
+
     class << self
       # Decorate a collection, collection must extend Enum behavior
       # @param delegatees [Array] collection of source object to decorate
